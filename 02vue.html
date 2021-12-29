@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="./js/vue.js"></script>
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app">
+        <input type="text" v-model:value="title">
+        <h1>你好 ，{{name}}</h1>
+    </div>
+    <script>
+        const v = new Vue({
+            // el: "#app",
+            data: function () {
+                return {
+                    title: "sdasda",
+                    name: "我是谁"
+                }
+            }
+        });
+        v.$mount('#app')
+
+        let obj={x:100}
+        let obj2={y:100}
+
+        Object.defineProperty(obj2,'x',{
+            get (){
+                return obj.x;
+            },
+            set (value){
+                obj.x=value;
+            }
+        })
+    </script>
+</body>
+
+</html>

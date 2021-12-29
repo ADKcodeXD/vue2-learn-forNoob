@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="./js/vue.js"></script>
+    <title>监视</title>
+</head>
+
+<body>
+    <div id="app">
+        <h1>今天天气{{info}}</h1>
+        <button @click="changeWeather">切换天气</button>
+        <button @click="numbers.a++">修改a</button>
+    </div>
+    <script>
+        const vm = new Vue({
+            el: "#app",
+            data: {
+                isHot: false,
+                numbers: {
+                    a: 1,
+                    b: 2
+                }
+            },
+            methods: {
+                changeWeather: function () {
+                    this.isHot = !this.isHot;
+                }
+            },
+            computed: {
+                info() {
+                    return this.isHot ? '热' : '冷';
+                }
+            },
+            watch: {
+                immediate: true,
+
+                isHot: {
+                    handler() {
+                        console.log("被修改")
+                    }
+                },
+                numbers(newValue, oldValue) {
+
+                    console.log("a被修改")
+                }
+            }
+        }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="./js/vue.js"></script>
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app">
+        <div class="root">
+            <h1>欢迎您 {{name}}</h1>
+            <!-- <button v-on:click="showInfo">点我</button> -->
+            <button @click="showInfo2(15,$event)">点我</button>
+            <a href="http://www.baidu.com" @click.prevent="showInfo">点我</a>
+        </div>
+    </div>
+    <script>
+        new Vue({
+            el: "#app",
+            data: {
+                name: "xxx"
+            },
+            methods: {
+                showInfo(event) {
+                    alert("你好啊");
+                },
+                showInfo2(number, event) {
+                    alert("你好啊" + number);
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
