@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="./js/vue.js"></script>
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app">
+        <input type="text" v-fbind="big">
+    </div>
+    <script>
+        new Vue({
+            el: "#app",
+            data: {
+                big: 100
+            },
+            directives: {
+                big(element, binding) {
+                    //不靠返回值
+                    console.log("big");
+                },
+                fbind: {
+                    bind() {
+                        //成功绑定的时候
+                        console.log("bind");
+                    },
+                    inserted() {
+                        //指令所在元素被插入页面时调用
+                        console.log("inserted");
+                    },
+                    update() {
+                        console.log("update");
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

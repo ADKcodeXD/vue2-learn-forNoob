@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="./js/vue.js"></script>
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app">
+        <h1>学校：{{school}}</h1>
+        <h1>地址：{{adress}}</h1>
+        <hr>
+        <h2>年龄{{age.rAge}} 性别:{{age.sex}}</h2>
+    </div>
+    <script>
+        new Vue({
+            el: "#app",
+            data: {
+                school: "佛",
+                adress: "佛山",
+                age: {
+                    rAge: 10,
+                    iAge: 12
+                },
+                friends: [{
+                    name: "zs",
+                    age: 12,
+                    school: "dibaotianxing"
+                }]
+            },
+            methods: {
+
+            },
+        });
+    </script>
+</body>
+
+</html>

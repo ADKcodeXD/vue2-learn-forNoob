@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="./js/vue.js"></script>
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app">
+        <input type="text" v-model="content" placeholder="请输入内容搜索">
+        <button @click="sortType=1">升序</button>
+        <button @click="sortType=2">降序</button>
+        <button @click="sortType=0">原序</button>
+        <ul v-for="(p,index) in filpersons" :key="p.id">
+            <li>{{p.name}}---{{p.age}}</li>
+        </ul>
+    </div>
+    <script>
+        new Vue({
+            el: "#app",
+            data: {
+                persons: [{
+                        age: 20,
+                        name: "马伦"
+                    },
+                    {
+                        age: 19,
+                        name: "马老师"
+                    },
+                    {
+                        age: 33,
+                        name: "周老师"
+                    },
+                    {
+                        age: 44,
+                        name: "周杰伦"
+                    }
+                ],
+                content: "",
+                sortType: 0,
+            },
+            methods: {
+                changeperson: function () {
+                    let a = {
+                        id: 444,
+                        name: "wangliu"
+                    }
+                    this.persons.unshift(a)
+                }
+            },
+            // watch: {
+            //     immediate: true,
+            //     content: {
+            //         immediate: true,
+            //         handler(val) {
+            //             this.filpersons = this.persons.filter((p) => {
+            //                 return p.name.indexOf(val) !== -1;
+            //             })
+            //         }
+            //     }
+            // },
+            computed: {
+                filpersons() {
+                    const arr = this.persons.filter((p) => {
+                        return p.name.indexOf(this.content) !== -1;
+                    })
+                    if (this.sortType !== 0) {
+                        arr.sort((a, b) => {
+                            return this.sortType === 1 ? b.age - a.age : a.age - b.age;
+                        })
+                    }
+                    return arr;
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

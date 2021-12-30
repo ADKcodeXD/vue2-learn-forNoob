@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="./js/vue.js"></script>
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app">
+        <school>
+
+        </school>
+        <hr>
+        <h2>学生性别:{{sex}}</h2>
+        <h2>学生年龄:{{age}}</h2>
+    </div>
+    <script>
+        //组件1 
+        const school = Vue.extend({
+            template: `
+            <div>
+                <h1>学生姓名:{{studentname}}</h1>
+                <h1>学校名:{{schoolname}}</h1>
+            </div>
+            `,
+            // 不写el配置项，因为最终由一个vm管理
+            data() {
+                //data必须要是函数式对象
+                return {
+                    studentname: "wanglaowu",
+                    schoolname: "taiping",
+                }
+            }
+        })
+        //组件2
+        const info = Vue.extend({
+            data() {
+                return {
+                    sex: "man",
+                    age: 18
+                }
+            }
+        })
+
+        new Vue({
+            el: "#app",
+            components: {
+                school,
+                info
+            }
+        });
+    </script>
+</body>
+
+</html>

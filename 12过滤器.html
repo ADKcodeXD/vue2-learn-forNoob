@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="./js/vue.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/dayjs/1.10.7/dayjs.min.js"></script>
+    <title>过滤器</title>
+</head>
+
+<body>
+    <div id="app">
+        <h1>{{time2}}</h1>
+        <h2>过滤器：{{time | timeformat}}</h2>
+    </div>
+    <script>
+        Vue.fliter('xxx',function(value){
+            return xxx;
+        })
+        new Vue({
+            el: "#app",
+            data: {
+                time: Date.now()
+            },
+            computed: {
+                time2() {
+                    return dayjs(this.time).format(' MM-DD-HH:mm:ss');
+                }
+            },
+            filters: {
+                timeformat(value) {
+                    return dayjs(value).format(' MM-DD-HH:mm:ss');
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

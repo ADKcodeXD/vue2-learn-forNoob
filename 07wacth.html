@@ -37,18 +37,15 @@
             },
             watch: {
                 immediate: true,
-
                 isHot: {
                     handler() {
                         console.log("被修改")
                     }
                 },
                 numbers(newValue, oldValue) {
-
                     console.log("a被修改")
                 }
             }
-        }
         });
     </script>
 </body>

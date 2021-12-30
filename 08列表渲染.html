@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="./js/vue.js"></script>
+    <title>list render</title>
+</head>
+
+<body>
+    <div id="app">
+        <ul v-for="person in persons">
+            <li>{{person.id}}</li>
+            <li>{{person.name}}</li>
+        </ul>
+    </div>
+    <script>
+        new Vue({
+            el: "#app",
+            data: {
+                persons: [{
+                        id: 111,
+                        name: "zhangsan"
+                    },
+                    {
+                        id: 222,
+                        name: "lisi"
+                    },
+                    {
+                        id: 333,
+                        name: "wangwu"
+                    }
+                ]
+            }
+        });
+    </script>
+</body>
+
+</html>

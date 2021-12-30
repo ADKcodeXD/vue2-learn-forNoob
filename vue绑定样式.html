@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="./js/vue.js"></script>
+    <title>绑定样式</title>
+    <style>
+        .box1 {
+            border: 1px red solid;
+            background-color: brown;
+            width: 200px;
+            height: 100px;
+        }
+
+        .box2 {
+            border: 1px red solid;
+            background-color: rgb(18, 211, 0);
+            width: 300px;
+            height: 200px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div :class="arr2">
+            test
+        </div>
+        <template>
+            <div>
+                
+            </div>
+        </template>
+    </div>
+    <script>
+        new Vue({
+            el: "#app",
+            data: {
+                box: 'box2',
+                arr: ['box1', 'box2'],
+                arr2: {
+                    box1: true,
+                    box2: false
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
