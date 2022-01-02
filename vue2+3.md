@@ -952,3 +952,563 @@ template: `
 
 第三步，定义template属性，并使用自定义标签
 
+```html
+<school>
+
+</school>
+```
+
+第四步 调用组件
+
+
+
+
+
+#### VueComponent
+
+组件，本质就是调用了VueComponent的构造函数。
+
+每次调用Vue.extend，都是返回一个新的VueComponent
+
+我们写一个组件对象到dom中，vue都会帮我们解析为一个VueComponent对象，并渲染到页面中。
+
+也就是组件对象，就是调用了VueComponent的构造函数
+
+![image-20211230222346346](C:\Users\79053\AppData\Roaming\Typora\typora-user-images\image-20211230222346346.png)
+
+根据源码 可见extend底层实现就是生成一个VueComponent函数对象，并将其返回。
+
+#### 重要的内置关系
+
+vm有的功能，vc不一定有，vc有的功能，vm肯定有
+
+也即VueComponent.prototype.__proto__==Vue.prototype
+
+Vue.prototype.__proto__=object
+
+正是因为这个关系，组件上的实例对象也能访问vm中的所有属性和方法。
+
+#### 单文件组件
+
+xxx.vue
+
+vue-cli 脚手架
+
+命名规范，首字母大写或小写，驼峰命名或者横杠连接命名
+
+vue 文件的结构
+
+```vue
+<template>
+    
+</template>
+
+<script>
+export default {
+    
+}
+</script>
+
+<style>
+
+</style>
+```
+
+三个模块，分别放模板的结构，脚本，以及样式。
+
+我们在模板中，写好组件，就可以了。
+
+```js
+export default {
+    name:"school",
+    data() {
+        return {
+            schoolname:"foda",
+            address:"humen"
+        }
+    }
+}
+```
+
+name：模板的名字，最好和文件名保持一致，这样规范比较好。
+
+
+
+app.vue 用于管理所有的组件。必须拥有
+
+app中需要引入所有单文件组件，并进行组合
+
+```js
+import School from './School.vue'
+import Student from './Student.vue'
+export default {
+   name:'app',
+   components:{
+       School,
+       Student
+   }
+
+}
+```
+
+然后需要一个main.js
+
+main.js是创建vue实例的。
+
+```js
+import app from './app.vue'
+new Vue({
+    el:'#root',
+    components:{app},
+    
+})
+```
+
+最后我们新建一个index.html
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>index</title>
+    
+</head>
+<body>
+    <div class="root">
+        <app></app>
+    </div>
+    <script src="../js/vue.min.js"></script>
+    <script src="./main.js"></script>
+</body>
+</html>
+```
+
+在最下方引入main.js 防止模板未加载完的情况发生
+
+不过我们这样仍然未能运行，因为浏览器不认识es6的引入语法。
+
+需要创建脚手架，我们才能看到结果。
+
+#### 安装脚手架以及分析
+
+脚手架使用npm就可以进行安装。
+
+![image-20211231183529683](C:\Users\79053\AppData\Roaming\Typora\typora-user-images\image-20211231183529683.png)
+
+src文件夹
+
+main.js 是vue工程的入口，首先执行的一定是这段代码。
+
+然后 引入app组件，他是所有组件的父组件
+
+```js
+.$mount('#app')
+```
+
+其实这句话等价于
+
+```js
+el:"#app"
+```
+
+components文件夹
+
+所有组件的单文件都往这里放。
+
+
+
+![image-20211231190723713](C:\Users\79053\AppData\Roaming\Typora\typora-user-images\image-20211231190723713.png)
+
+错误分析，我们引入的vue是一个残缺版的vue。
+
+```js
+import Vue from 'vue/dist/vue'
+```
+
+引入完整版的vue即可解决错误。
+
+又或者，使用render函数。
+
+```js
+render:h=>h(app)
+```
+
+vue为了防止我们用的是残缺版的vue，这个vue没有解析器，因此引入了一个render函数。
+
+render的意义：由于vue中的模板解析器占了近三分之一的体积，在打包的时候如果还在的话，会占据很大的空间。
+
+vue.runtime 运行时vue
+
+这些vue都去掉了模板解析器，使用的是最精简的vue版本。
+
+
+
+#### 脚手架默认配置
+
+要找到我们的脚手架的默认配置，首先要进行配置的导出
+
+```shell
+ vue inspect > output.js
+```
+
+##### vue.config.js
+
+可以新建一个vueconfijs文件夹，放在工程根目录下，通过这个文件我们可以修改脚手架的默认配置。
+
+然后可以通过官网的一些配置选项，去更改我们所需的配置项。
+
+![image-20211231195212599](C:\Users\79053\AppData\Roaming\Typora\typora-user-images\image-20211231195212599.png)
+
+可以看到，我们的main.js index 都是由这里的配置项所决定的，通过这些配置项，我们可以高度定制我们的脚手架。
+
+
+
+#### ref属性
+
+当我们要操作原生dom元素的时候，如果还使用原生的dom的方法和操作，未免有些太过于粗糙。因此vue给我们提供了一种操作dom的方法，也就是ref
+
+```html
+ <div ref="title"></div>
+<button @click="showdom">点我点我</button>
+```
+
+```js
+methods: {
+    showdom(){
+        this.$refs.title
+    }
+},
+```
+
+
+
+
+
+#### 子组件传值
+
+props
+
+在父组件想自定义子组件的属性的时候，可以通过自定义属性去传值。
+
+子组件需要用一个props来接受父组件传的值。
+
+```js
+props:['name','age','sex']
+```
+
+由于需要vc来接受和编译，因此传入的时候需要加一个冒号
+
+加一个冒号，vm在解析的时候会把这个属性当成表达式解析。
+
+如果想防止父组件传错值，我们可以在子组件对数据进行类型限制。
+
+```js
+// props:['name','age','sex']
+    props:{
+        name:{
+            type:String,
+            required:true
+        },
+        age:{
+            type:Number,
+            default:99
+        },
+        sex:{
+            type:String,
+            required:true
+        }
+    }
+```
+
+```html
+<school :name="xiaoli" :sex="sex" :age="18"> </school>
+使用冒号的话，需要绑定父组件中自己所具有的属性，如果不使用冒号，则当成字符串解析
+```
+
+props在子组件中，优先级是比自己的data高的，
+
+另外，props中的属性是不建议修改的。所以需要改的话，建议放入data中再修改。
+
+#### mixin
+
+比如说，有两个组件的方法，都是一样的。
+
+这个时候就可以使用一个mixin.js 来封装这个methods
+
+```js
+export const mix = {
+    methods: {
+        showname(){
+            alert(this.schoolname)
+        }
+    },
+}
+```
+
+```js
+import {mix} from '../mixin.js'
+export default {...
+mixins:[mix]
+               }
+```
+
+混合的冲突解决：优先组件的为主，不会覆盖组件的数据或者方法。
+
+#### vue插件
+
+定义插件，很简单，使用一个js文件并暴露出来即可。
+
+```js
+import plugins from './plugins'
+
+Vue.use(plugins)
+```
+
+在main.js中这样使用即可。
+
+#### scoped
+
+用于子组件中单独使用样式，让样式不会影响到其他组件
+
+不过app这个组件不太适合这个属性。
+
+vuestyle中里面可以指定less编写
+
+不过要安装less-loader
+
+npm i less-loader
+
+```html
+<style scoped lang="less">
+```
+
+### todolist 组件化流程
+
+首先编写静态页面，并分析静态页面所需的组件。
+
+nanoid的使用
+
+uuid的精简版 需要npm安装
+
+#### 组件间通信
+
+让子给父组件传消息，可以通过父组件给子组件绑定一个自定义事件，然后就可以在子组件使用emit方法，触发父组件的中的方法，这样就可以做到子给父传值。
+
+子组件
+
+```js
+sendSchoolname(){
+    this.$emit('father',this.schoolname)
+}
+```
+父组件js
+
+```js
+demo(name){
+       console.log(name);
+     }
+```
+
+
+
+父组件绑定自定义事件
+
+```html
+<school v-on:father="demo"></school>
+```
+
+
+
+
+
+#### 另一种方法 ref
+
+通过ref指定组件的名字，可以通过refs来获取子组件的对象。
+
+```js
+mounted() {
+     this.$refs.student.$on('father',this.demo)
+   },
+```
+
+
+
+#### 解绑自定义事件
+
+```js
+unbind(){
+    this.$off('father')
+}
+```
+
+只适用解绑一个事件 的写法
+
+解绑多个的时候，里面可以加上数组。
+
+```js
+unbind(){
+    this.$off(['father',....])
+}
+```
+
+```js
+unbind(){
+    this.$off()
+}
+```
+
+当然可以里面什么都不加，那就是把所有自定义事件都解绑。
+
+
+
+
+
+#### 全局事件总线
+
+可以实现任意组件间的通信
+
+事件总线不是某个api，而是通过自定义指令进行实现的一个模板
+
+通过放一个x在Vue的prototype上，得到了一个对所有组件可见的对象。
+
+```js
+Vue.prototype.x={x:1,y:2}
+```
+
+
+
+总结：
+
+```js
+beforeCreate() {
+    Vue.prototype.$bus=this
+}
+```
+
+在main.js中来一个钩子函数，使用bus来存放所有的通信函数。
+
+```js
+mounted() {
+       this.$bus.$on('hello',(data)=>{
+           console.log('我是school组件'+data);
+       })
+    },
+```
+
+school组件
+
+```js
+methods: {
+        sendStudentname(){
+            this.$bus.$emit('hello',666)
+        }
+    },
+```
+
+student组件
+
+这样就实现了兄弟组件间的通信。school绑定了一个hello事件，并有一个回调函数，通过bus的emit来触发这个绑定事件
+
+
+
+
+
+#### 消息订阅与发布
+
+pubsub-js
+
+一个订阅与发布的js库，可以用于各种框架，不仅限于vue
+
+```js
+pubsub.subscribe('hello',function(a,b){
+    console.log("有人发布了消息，并且执行了"+b);
+})
+```
+
+```js
+import pubsub from 'pubsub-js'
+...
+sendStudentname(){
+    pubsub.publish('hello',666)
+    // this.$bus.$emit('hello',666)
+}
+```
+
+
+
+#### nextTick
+
+nextTick指定的回调函数会在dom更新之后再执行。
+
+一般在函数内，vue会等我们的代码执行完了之后才去更新dom
+
+如果我们需要dom更新之后再执行一些操作，就需要使用到nextTick
+
+
+
+### 动画效果
+
+vue中使用transition标签来标记一个动画，需要动画的标签都需要加上transition
+
+```css
+.v-enter-active{
+    animation: xtranslate 1s;
+}
+
+.v-leave-active{
+    animation: xtranslate 1s reverse;
+}
+
+@keyframes xtranslate{
+    from{
+        transform: translateX(-200px);
+    }
+    to{
+        transform: translateX(0);
+    }
+}
+```
+
+vue需要两个类，来控制动画
+
+```html
+<transition name='hello'>
+    <h1 v-show="flag" class="come">学生姓名{{studentname}}</h1>
+</transition>
+```
+
+如果我们给transition取了名字，那么久需要在css中更改v的名字
+
+```css
+.hello-enter-active{
+    animation: xtranslate 1s;
+}
+
+.hello-leave-active{
+    animation: xtranslate 1s reverse;
+}
+```
+
+
+
+
+
+不使用关键帧的写法。
+
+```css
+.hello-enter,.hello-leave-to{
+    transform: translateX(-100%);
+}
+.hello-enter-active,.hello-leave.active{
+    transition: 0.5s ease;
+}
+.hello-enter-to,.hello-leave{
+    transform: translateX(0);
+}
+```
+
+
+
