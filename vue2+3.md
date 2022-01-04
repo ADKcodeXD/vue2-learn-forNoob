@@ -1512,3 +1512,571 @@ vue需要两个类，来控制动画
 
 
 
+#### 多个元素动画
+
+多个元素做动画的时候，要使用transition group
+
+动画库animate.css
+
+```css
+<transition name="animate__animated animate__bounce"
+enter-active-class="animate__bounceInLeft"
+leave-active-class="animate__fadeOutRight"
+appear>
+    <h1 v-show="flag">学生姓名{{studentname}}</h1>
+</transition>
+```
+
+使用animate.css可以做到很好的动画，相当于预设。
+
+
+
+### 代理
+
+vue推荐使用axios
+
+```js
+npm i axios
+```
+
+使用前先安装
+
+```js
+methods: {
+    getStudents(){
+        axios.get('http://localhost:5000/students').then(
+            response =>{
+                console.log("成功",response.data);
+            },
+            error=>{
+                console.log("失败了",error.reason);
+            }
+        )
+    }
+},
+```
+
+vue解决跨域问题
+
+1、cors
+
+2、jsonp
+
+cors解决跨域需要后端人员增加请求头，相对来说安全性较低，
+
+3、代理服务器
+
+通过一个代理服务器，在两个服务请求的时候，使用一个代理的中转服务器，来进行跨域的解决。
+
+服务器和服务器之间打交道，不需要跨域，也不需要用到前端请求。因此可以不用跨域
+
+nginx就是经典的反向代理的实现。
+
+我们使用vue-cli来进行代理服务器的实现。
+
+```js
+devServer: {
+    proxy: 'http://localhost:5000'
+  }
+```
+
+在vue.config.js里面开启devserver
+
+一般保持和需求请求的服务器地址和端口号保持一致即可。
+
+
+
+**小坑，由于挂载在后台的服务器长时间不刷新，会导致代理服务器无法获取服务器的资源，导致了一直转圈的情况 进服务器按一下ctrl+c即可解决**
+
+
+
+另外，代理服务器会优先访问服务器所在的地址和空间里的信息，如果当前资源目录下有资源，就会优先访问这个资源。
+
+
+
+#### 配置代理方式2
+
+```js
+devServer: {
+    proxy: {
+      '/api': {
+        target: '<url>',
+        ws: true,
+        changeOrigin: true
+      },
+      '/foo': {
+        target: '<other_url>'
+      }
+    }
+  }
+```
+
+增加前缀，想走代理，需要加上前缀才有效。
+
+当然，现在直接配置，现在还是会请求失败。
+
+因为我们请求资源的时候把api/student也给带上了，所以导致了请求失败。
+
+因此要加上这个配置项，路径重写：
+
+```js
+proxy: {
+    '/api': {
+        pathRewrite:{'^/api':''},
+        target: 'http://localhost:5000',
+        ws: true,
+        changeOrigin: true
+    },
+```
+
+这样路径带上api的地方会被vue自动重写为空字符串
+
+需要配置多个代理，则直接复制多个对象并重写服务器地址。
+
+
+
+#### github 请求
+
+https://api.github.com/search/users?q=xxx 
+
+可以使用这个接口去请求github用户数据
+
+
+
+
+
+### vue-resource
+
+一个代替axios的getpost库，现在已经不由vue团队进行维护，也用的比较少。
+
+
+
+### slot插槽
+
+可以通过slot标签，往组件里放东西的时候，我们可以预先放好slot标签的地方，挖坑待填。如果外部使用组件，就可以往这个slot放入内容，这就是插槽的使用。
+
+插槽也可以指定名字，通过name属性来指定名字
+
+```html
+<category title="美食" >
+    <img src="./assets/logo.png" alt="">
+</category>
+<category title="游戏" >
+    <ul v-for="(item,index) in foods" :key="index">
+        <li>{{item}}</li>
+    </ul>
+</category>
+<category title="电影" />
+```
+
+```html
+<div class="sb">
+    <h3>这是{{title}}词条</h3>
+    <slot name="footer"></slot>
+</div>
+```
+
+指定的时候有两种方法
+
+一种是
+
+```html
+<template v-slot:xxx>
+第二种是
+<template slot="xxx"></template>
+```
+
+#### 作用域插槽
+
+插槽有时候需要用到其他组件的内容，就需要涉及到一个作用域问题
+
+```js
+<slot :games="games">
+
+    </slot>
+```
+
+这样可以吧组件里的数据，反过来传给插槽的使用者。
+
+```html
+<template scope="game">
+    <ul v-for="(item,index) in game.games" :key="index">
+        <li>{{item}}</li>
+    </ul>
+</template>
+```
+
+必须要用template包裹起来，否则无法接收这个games
+
+用途：数据定义在组件中，但是插槽使用者在外部，父组件可以使用这个插槽并且得到组件内的数据，
+
+
+
+### vuex
+
+是专门在vue中，实现集中式状态数据管理的一个vue插件
+
+在多组件更改数据的时候，由于都通过事件总线来进行操作数据，会十分困难。
+
+因此vuex就是为了解决这个痛点而出现，数据可以存放在vuex中，vuex为所有组件提供了一个命名空间。
+
+![image-20220103153305178](C:\Users\79053\AppData\Roaming\Typora\typora-user-images\image-20220103153305178.png)
+
+#### vuex工作原理
+
+![vuex](D:\Code 练习\前端\data\资料（含课件）\资料（含课件）\02_原理图\vuex.png)
+
+Actions Mutations State 
+
+通过store来存储和调用
+
+#### 搭建环境
+
+npm安装vuex
+
+然后在main.js中使用vuex
+
+```js
+import vuex from 'vuex'
+
+Vue.use(vuex)
+```
+
+在src文件夹中创建一个store文件夹，文件夹下新建一个index.js
+
+![image-20220103162643556](C:\Users\79053\AppData\Roaming\Typora\typora-user-images\image-20220103162643556.png)
+
+```js
+import Vue from 'vue'
+import Vuex from 'vuex';
+
+Vue.use(Vuex)
+// 响应动作的actions
+
+const actions={
+    
+}
+
+//操作数据的mutations
+const mutations={
+
+}
+
+// 准备state
+const state={
+
+}
+
+//创建store
+export default new Vuex.Store({
+    actions,
+    mutations,
+    state
+})
+```
+
+index.js
+
+最后在main.js里引用
+
+
+
+
+
+#### 使用
+
+通过在index.js的state里配置全局变量，再组件中使用store调用dispatch方法，来触发index.js中action中的方法
+
+this.$store.dispatch('jia',this.n)
+
+action会收到两个参数，第一个是ministore，第二个才是我们传过去的参数
+
+```js
+jia(context,value){
+    context.commit('JIA',value);
+}
+```
+
+第一个是mutations中的方法，
+
+mutations会收到两个参数，一个是state，第二个是传入的形参。
+
+因此在这里直接用state进行求值即可
+
+```js
+const mutations={
+    JIA(state,value){
+        state.sum+=value;
+    }
+}
+```
+
+INDEX.JS中 action应处理完业务逻辑，具体的数据操作全部交给mutations去做
+
+```JS
+oddjia(context,value){
+    if(context.state.sum%2){
+        context.commit('ODDJIA',value);
+    }
+},
+    waitjia(context,value){
+        setTimeout(() => {
+            context.commit('WAITJIAN',value);
+        }, 500);
+    },
+```
+
+如果在调用时则清楚不需要处理业务逻辑，可以直接在组件中进行commit
+
+```js
+add() {
+    this.$store.commit('JIA', this.n)
+},
+    dec() {
+        this.$store.commit('JIAN', this.n)
+},
+```
+
+
+
+#### vuex 开发者工具
+
+
+
+#### getters
+
+```js
+const getters={
+    bigsum(state){
+       return  state.sum*10
+    }
+}
+```
+
+```html
+<h4>当前求和*10为{{$store.getters.bigsum}}</h4>
+```
+
+相当于vue中的一个计算属性，能够根据state中的数据，去计算一个新的数值。
+
+
+
+#### mapstate
+
+代码生成器，能够方便的让我们取到vuex中存放的数据。
+
+```js
+import {mapState} from 'vuex';
+//借助mapstate生成计算属性，从state中选数据
+computed:{
+    ...mapState({sum1:'sum',school:'school',subject:'subject'})
+},
+```
+
+...运算符吧mapstate中的东西扩展为一个对象拼接为一个数组。
+
+第二种写法，生成的计算属性名会和读取的属性名保持一致，保持一致的情况下才能用，
+
+
+
+```js
+computed:{
+    // ...mapState({sum1:'sum',school:'school',subject:'subject'})
+    ...mapState(['sum','school','subject'])
+},
+```
+
+
+
+要获取getters中的数据，也是同理
+
+```js
+...mapGetters(['bigsum'])
+```
+
+
+
+#### mapaction
+
+```js
+// add() {
+//     this.$store.commit('JIA', this.n)
+// },
+// dec() {
+//     this.$store.commit('JIAN', this.n)
+// },
+...mapMutations({add:'JIA',dec:'JIAN'}),
+//数组方式的话，需要把名字改成一致的，这里不推荐
+    
+```
+
+这样直接改有个问题，就是我们的mutations的函数无法直接收到传过来的n
+
+因此在html结构中要加上小括号传参
+
+```html
+<button @click="add(n)">+</button>
+<button @click="dec(n)">-</button>
+```
+
+mapaction也是同理的
+
+```js
+// oddadd() {
+//      this.$store.dispatch('oddjia', this.n)
+// },
+// waitadd() {
+//     this.$store.dispatch('waitjia', this.n)
+// }
+...mapActions({oddadd:'oddjia',waitadd:'waitjia'})
+```
+
+
+
+#### 多组件共享数据
+
+
+
+
+
+#### vuex模块化
+
+ 当我们只有一个index.js的时候，如果不能够分模块进行编写，很容易导致index.js过于混乱，不好维护。因此我们的vuex也要进行模块化以及工程化的处理。
+
+```js
+const countOption = {
+    actions: {
+        oddjia(context, value) {
+            if (context.state.sum % 2) {
+                context.commit('ODDJIA', value);
+            }
+        },
+        waitjia(context, value) {
+            setTimeout(() => {
+                context.commit('WAITJIAN', value);
+            }, 500);
+        },
+    },
+    mutations: {
+        JIA(state, value) {
+            state.sum += value;
+        },
+        JIAN(state, value) {
+            state.sum -= value;
+        },
+        ODDJIA(state, value) {
+            state.sum += value
+        },
+        WAITJIAN(state, value) {
+            state.sum += value
+        },
+    },
+    state: {
+        sum: 0,
+        school: '佛山大学',
+        subject: '前端',
+    },
+    getters: {
+        bigsum(state) {
+            return state.sum * 10
+        }
+    }
+}
+//人员模块
+const personOption = {
+    mutations: {
+        ADD_PERSON(state, value) {
+            state.personList.unshift(value)
+        },
+    },
+    state: {
+        personList: [{
+            id: 1,
+            name: "zhangsan"
+        }]
+    },
+    actions:{},
+    getters:{}
+}
+
+//分类 模块
+//创建store
+export default new Vuex.Store({
+    modules:{
+        a:countOption,
+        b:personOption
+    }
+})
+
+```
+
+这样分好之后，我们要怎么使用呢？
+
+通过绑定这个a和b，然后a.sum即可拿到数据
+
+当然，我们不想加上这个a或者b 也是有办法做到的。
+
+```js
+...mapState('countAbout',['sum','school','subject']),
+```
+
+不过有前提，我们要开启countAbout的命名空间
+
+![image-20220103212616517](C:\Users\79053\AppData\Roaming\Typora\typora-user-images\image-20220103212616517.png)
+
+方法也要说明白命名空间
+
+```js
+...mapMutations('countAbout',{
+    add: 'JIA',
+    dec: 'JIAN'
+}),
+```
+
+
+
+不过在使用$store.commit或者dispatch来使用这个命名空间的话，稍微有困难且复制
+
+需要一个斜杠来表明命名空间
+
+```js
+this.$store.commit('personAbout/ADD_PERSON',person);
+```
+
+![image-20220103214508818](C:\Users\79053\AppData\Roaming\Typora\typora-user-images\image-20220103214508818.png)
+
+getters下想到获取数据，相对于store会比较困难
+
+```js
+firstPersonName(){
+    return this.$store.getters['personAbout/firstPersonName']
+}
+```
+
+
+
+当然 ，还可以在store文件夹下直接创建两个js文件来命名两个不同的模块。这样就实现了彻底的分离。
+
+![image-20220103220521377](C:\Users\79053\AppData\Roaming\Typora\typora-user-images\image-20220103220521377.png)
+
+```js
+import Vue from 'vue'
+import Vuex from 'vuex';
+import countOption from './count';
+import personOption from './person';
+
+Vue.use(Vuex)
+// 响应动作的actions
+
+
+//创建store
+export default new Vuex.Store({
+    modules:{
+        countAbout:countOption,
+        personAbout:personOption
+    }
+})
+```
+
+## 路由
+

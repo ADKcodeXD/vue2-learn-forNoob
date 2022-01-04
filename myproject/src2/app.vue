@@ -1,20 +1,26 @@
 <template>
   <div>
-      <student></student>
+    <count></count>
+    <person></person>
   </div>
 </template>
 
 <script>
-import Student from './components/Student.vue'
-export default {
-   name:'app',
-   components:{
-       Student
-   }
-
-}
+  import axios from 'axios';
+  import count from './components/Count.vue'
+  import Person from './components/Person.vue';
+  export default {
+    name: 'app',
+    components: {
+      count,
+      Person
+    }
+  }
 </script>
 
 <style>
-
+  .ac {
+    display: flex;
+    justify-content: space-between;
+  }
 </style>
